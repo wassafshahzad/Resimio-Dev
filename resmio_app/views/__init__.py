@@ -1,2 +1,2 @@
-from .booking_viewbooking_view import BookingManageView, BookingDeleteView
+from .booking_view import BookingManageView, BookingDeleteView
 from .auth_views import *

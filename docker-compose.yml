@@ -7,7 +7,7 @@ services:
     command: bash -c "
       while !</dev/tcp/db/5432; do sleep 1; done;
       python manage.py makemigrations && python manage.py collectstatic --no-input &&
-      python manage.py migrate && gunicorn --bind 0.0.0.0:8000 resmio_test.wsgi:application"
+      python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:

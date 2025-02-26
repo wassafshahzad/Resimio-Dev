@@ -1,8 +1,8 @@
 from django import forms
+from django.utils import timezone
+
 from resmio_app.models import Booking
-from repositories.facility_repository import FacilityRepository
-from repositories.booking_repository import BookingRepository
-from datetime import date
+from resmio_app.repositories import FacilityRepository, BookingRepository
 
 class BookingForm(forms.ModelForm):
     """
@@ -30,7 +30,7 @@ class BookingForm(forms.ModelForm):
         """ Ensure the booking date is valid. """
         booking_date = self.cleaned_data.get("date")
 
-        if booking_date < date.today():
+        if booking_date < timezone.now():
             raise forms.ValidationError("You cannot book a past date.")
 
         return booking_date

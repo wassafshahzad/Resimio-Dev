@@ -1,6 +1,8 @@
-from resmio_app.models import Booking
 from datetime import date
 from django.db import IntegrityError
+from django.utils import timezone
+
+from resmio_app.models import Booking
 
 class BookingRepository:
     """
@@ -12,7 +14,7 @@ class BookingRepository:
         """
         Retrieves all bookings for a given user.
         """
-        return Booking.objects.filter(user=user)
+        return Booking.objects.filter(user=user).select_related("facility")
 
     @staticmethod
     def create_booking(user, facility, booking_date):
@@ -20,7 +22,7 @@ class BookingRepository:
         Creates a booking for a facility with the following validations.
         """
 
-        if booking_date < date.today():
+        if booking_date < timezone.now():
             raise ValueError("Cannot book a facility in the past.")
 
         if Booking.objects.filter(user=user, facility=facility, date=booking_date).exists():
@@ -32,11 +34,11 @@ class BookingRepository:
             raise ValueError("Error creating the booking. Please try again.")
 
     @staticmethod
-    def delete_booking(booking_id, user):
+    def delete_booking(booking_uuid, user):
         """
         Deletes a user's booking if it exists.
         """
-        booking = Booking.objects.filter(id=booking_id, user=user).first()
+        booking = Booking.objects.filter(uuid=booking_uuid, user=user).first()
         if booking:
             booking.delete()
             return True

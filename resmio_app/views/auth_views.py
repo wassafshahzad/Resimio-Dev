@@ -1,8 +1,8 @@
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms.authentication_forms import SignUpForm, LoginForm
-from .repositories.user_repository import UserRepository
+from resmio_app.forms.authentication_forms import SignUpForm, LoginForm
+from resmio_app.repositories import UserRepository
 
 class SignupView(FormView):
     """
@@ -10,7 +10,7 @@ class SignupView(FormView):
     """
     template_name = "auth/signup.html"
     form_class    = SignUpForm
-    success_url   = reverse_lazy("home")
+    success_url   = reverse_lazy("booking_list")
 
     def form_valid(self, form):
         user = UserRepository.create_user(
@@ -28,7 +28,7 @@ class CustomLoginView(LoginView):
     template_name               = "auth/login.html"
     form_class                  = LoginForm
     redirect_authenticated_user = True
-    success_url                 = reverse_lazy("home")
+    success_url                 = reverse_lazy("booking_list")
 
 class CustomLogoutView(LogoutView):
     """

@@ -1,0 +1,59 @@
+{% extends "app_base.html" %}
+
+{% block title %}Manage Bookings{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Manage Your Bookings</h2>
+
+    <!-- Booking Form -->
+    <div class="card p-4 mb-4 shadow">
+        <h4 class="mb-3">Book a Facility</h4>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-success">Confirm Booking</button>
+        </form>
+    </div>
+
+    <!-- Booking List -->
+    <div class="card p-4 shadow">
+        <h4 class="mb-3">Your Bookings</h4>
+        {% if bookings %}
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Facility</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.facility.name }}</td>
+                            <td>{{ booking.date }}</td>
+                            <td>
+                                <form method="post" action="{% url 'booking_delete' booking.uuid %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-muted">No bookings yet. Start by booking a facility above!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
