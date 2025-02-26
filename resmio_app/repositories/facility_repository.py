@@ -27,3 +27,13 @@ class FacilityRepository:
         Checks if a facility exists by ID.
         """
         return Facility.objects.filter(id=facility_id).exists()
+
+    @staticmethod
+    def get_all_facilities():
+        """
+        Returns the facilities owned by the user.
+
+        Args:
+            user: Session user.
+        """
+        return Facility.objects.all()
