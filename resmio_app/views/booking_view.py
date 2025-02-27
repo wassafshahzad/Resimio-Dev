@@ -18,6 +18,7 @@ class BookingManageView(LoginRequiredMixin, ListView, FormView):
     form_class          = BookingForm
     success_url         = reverse_lazy("booking_list")
     login_url           = reverse_lazy("login")
+    object_list         = []
 
     def get_queryset(self):
         """ Fetches all bookings for the logged-in user. """
@@ -33,7 +34,6 @@ class BookingManageView(LoginRequiredMixin, ListView, FormView):
         """ Handles booking creation with validation checks. """
         facility     = form.cleaned_data["facility"]
         booking_date = form.cleaned_data["date"]
-
         if BookingRepository.is_facility_full(facility):
             messages.error(self.request, f"'{facility.name}' is fully booked.")
             return self.form_invalid(form)
@@ -45,11 +45,17 @@ class BookingManageView(LoginRequiredMixin, ListView, FormView):
         except ValueError as e:
             form.add_error(None, str(e))
             return self.form_invalid(form)
-
-    def get_context_data(self, **kwargs):
-        self.object_list = self.get_queryset()
-        context = super().get_context_data(**kwargs)
-        return context
+    
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 class BookingDeleteView(LoginRequiredMixin, DeleteView):
     """
@@ -59,8 +65,8 @@ class BookingDeleteView(LoginRequiredMixin, DeleteView):
     success_url   = reverse_lazy("booking_list")
     template_name = "bookings/booking_confirm_delete.html"
 
-    def post(self, _):
-        booking_uuid = self.kwargs["booking_uuid"]
+    def post(self,*args, **kwargs):
+        booking_uuid = kwargs["booking_uuid"]
         if BookingRepository.delete_booking(booking_uuid, self.request.user):
             messages.success(self.request, "Booking canceled successfully.")
         else:

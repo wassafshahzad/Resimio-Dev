@@ -59,9 +59,16 @@ class Facility(BaseModel):
         location (str): The physical address or location details of the facility.
         capacity (int): The maximum number of people the facility can accommodate.
     """
-    name     = models.CharField(max_length=255, unique=True)
-    location = models.CharField(max_length=500)
+    name     = models.CharField(max_length=255, unique=True, db_index=True)
+    location = models.CharField(max_length=500, db_index=True)
     capacity = models.PositiveIntegerField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["name"]),
+            models.Index(fields=["location"])
+        ]
+
 
     def __str__(self):
         return self.name
@@ -86,8 +93,14 @@ class Booking(BaseModel):
 
     user     = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
     facility = models.ForeignKey('Facility', on_delete=models.CASCADE, related_name="bookings")
-    date     = models.DateTimeField()
-    status   = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    date     = models.DateTimeField(db_index=True)
+    status   = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending', db_index=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.facility.name} ({self.date})"
+    class Meta:
+        indexes = [
+            models.Index(fields=["date"]),
+            models.Index(fields=["status"]),
+            models.Index(fields=["facility", "date"])
+        ]

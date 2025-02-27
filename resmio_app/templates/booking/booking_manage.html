@@ -6,6 +6,17 @@
 <div class="container">
     <h2 class="mb-4">Manage Your Bookings</h2>
 
+    <!-- Display Messages -->
+    <div>
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for message in messages %}
+                    <div>{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
     <!-- Booking Form -->
     <div class="card p-4 mb-4 shadow">
         <h4 class="mb-3">Book a Facility</h4>
