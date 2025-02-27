@@ -8,6 +8,7 @@ from .views import (
     BookingManageView,
     BookingDeleteView,
     FacilityManageView,
+    HealthCheckView,
 )
 
 
@@ -23,4 +24,5 @@ urlpatterns = [
         name="booking_delete",
     ),
     path("facilities/", FacilityManageView.as_view(), name="facility_manage"),
+    path("health_check/", HealthCheckView.as_view(), name="health_check"),
 ]
